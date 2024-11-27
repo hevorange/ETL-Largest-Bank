@@ -20,6 +20,12 @@ log_path='./code_log.txt'
 def log_progress(message):
     ''' This function logs the mentioned message of a given stage of the
     code execution to a log file. Function returns nothing'''
+    timestamp_format ='%Y-%h-%d-%H:%M:%S'
+    now = datetime.now()
+    timestamp = now.strftime(timestamp_format)
+
+    with open(log_path, 'a') as f:
+        f.write(f"{timestamp}, {message} \n")
     
 
 
