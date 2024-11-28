@@ -33,11 +33,32 @@ def extract(url, table_attribs):
     ''' This function aims to extract the required
     information from the website and save it to a data frame. The
     function returns the data frame for further processing. '''
+    html_page = requests.get(url).text
+    data = BeautifulSoup(html_page,'html.parser')
+    df= pd.DataFrame(columns=table_attribs)
+    tables = data.find_all('tbody')
+    rows = tables[0].find_all('tr')
+    
+    for row in rows:
+        col = row.find_all('td')
+        if len(col)!=0:
+            # if col[1].find('a') is not None and '\n' not in col[2]:
+                data_dic={
+
+                    "Name": col[1].contents[2],
+                    "MC_USD_Billion": col[2].contents[0]
+                }
+                df1 = pd.DataFrame(data_dic, index=[0])
+                df1['MC_USD_Billion']= df1['MC_USD_Billion'].str.strip()
+                MC_USD_list= df1["MC_USD_Billion"].tolist()
+                MC_USD_list = [float("".join(x.split(','))) for x in MC_USD_list]
+                df1["MC_USD_Billion"] = MC_USD_list
+                df = pd.concat([df,df1], ignore_index=True)
 
     return df
 
 def transform(df, csv_path):
-    ''' This function accesses the CSV file for exchange rate
+    ''' This function accesses the CSV file for exchange rate[]
     information, and adds three columns to the data frame, each
     containing the transformed version of Market Cap column to
     respective currencies'''
@@ -59,3 +80,4 @@ def run_query(query_statement, sql_connection):
 ''' Here, you define the required entities and call the relevant
 functions in the correct order to complete the project. Note that this
 portion is not inside any function.'''
+
