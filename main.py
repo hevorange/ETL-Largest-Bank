@@ -62,6 +62,12 @@ def transform(df, csv_path):
     information, and adds three columns to the data frame, each
     containing the transformed version of Market Cap column to
     respective currencies'''
+    df_csv=pd.read_csv(csv_path)
+    exchange_rate = df_csv.set_index('Currency').to_dict()['Rate']
+    df['MC_GBP_Billion'] = [np.round(x*exchange_rate['GBP'],2) for x in df['MC_USD_Billion']]
+    df['MC_EUR_Billion'] = [np.round(x*exchange_rate['EUR'],2) for x in df['MC_USD_Billion']]
+    df['MC_INR_Billion'] = [np.round(x*exchange_rate['INR'],2) for x in df['MC_USD_Billion']]
+    
 
     return df
 
