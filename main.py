@@ -74,6 +74,7 @@ def transform(df, csv_path):
 def load_to_csv(df, output_path):
     ''' This function saves the final data frame as a CSV file in
     the provided path. Function returns nothing.'''
+    df.to_csv(output_path)
 
 def load_to_db(df, sql_connection, table_name):
     ''' This function saves the final data frame to a database
