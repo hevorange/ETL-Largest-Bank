@@ -88,7 +88,39 @@ def run_query(query_statement, sql_connection):
     query_oupout=  pd.read_sql(query_statement,sql_connection)
     print(query_oupout)
 
+
 ''' Here, you define the required entities and call the relevant
 functions in the correct order to complete the project. Note that this
 portion is not inside any function.'''
 
+log_progress('Preliminares completos. Iniciando proceso ETL')
+df=extract(url,table_attribs)
+
+log_progress("Extracción de datos completa. Iniciando proceso de transformación")
+df=transform(df,exchange_csv_path)
+
+log_progress("Transformación de datos completa. Iniciando proceso de carga")
+load_to_csv(df, csv_path)
+
+log_progress("Datos guardados en el archivo CSV")
+
+sql_connection= sqlite3.connect(db_name)
+
+log_progress("Conexión SQL iniciada")
+load_to_db(df,sql_connection,table_name)
+
+log_progress("Datos cargados en la base de datos como una tabla, ejecutando consultas")
+
+query_statement= f"SELECT * FROM {table_name}"
+run_query(query_statement,sql_connection)
+
+query_statement= f"SELECT AVG(MC_GBP_Billion) FROM {table_name}"
+run_query(query_statement,sql_connection)
+
+query_statement=f"SELECT Name from {table_name} LIMIT 5"
+run_query(query_statement,sql_connection)
+
+log_progress("Proceso completo")
+
+sql_connection.close()
+log_progress("Conexión del servidor cerrada")
